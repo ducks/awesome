@@ -14,7 +14,7 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Freedesktop menu
-local freedesktop = require("freedesktop")
+--local freedesktop = require("freedesktop")
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
 
@@ -102,20 +102,21 @@ myexitmenu = {
     { "reboot", "systemctl reboot", menubar.utils.lookup_icon("system-reboot") },
     { "shutdown", "poweroff", menubar.utils.lookup_icon("system-shutdown") }
 }
-mymainmenu = freedesktop.menu.build({
-    icon_size = 32,
-    before = {
-        { "Terminal", terminal, menubar.utils.lookup_icon("utilities-terminal") },
-        { "Browser", browser, menubar.utils.lookup_icon("internet-web-browser") },
-        { "Files", filemanager, menubar.utils.lookup_icon("system-file-manager") },
-        -- other triads can be put here
-    },
-    after = {
-        { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
-        { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
-        -- other triads can be put here
-    }
-})
+-- mymainmenu = freedesktop.menu.build({
+--     icon_size = 32,
+--     before = {
+--         { "Terminal", terminal, menubar.utils.lookup_icon("utilities-terminal") },
+--         { "Browser", browser, menubar.utils.lookup_icon("internet-web-browser") },
+--         { "Files", filemanager, menubar.utils.lookup_icon("system-file-manager") },
+--         -- other triads can be put here
+--     },
+--     after = {
+--         { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
+--         { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
+--         -- other triads can be put here
+--     }
+-- })
+
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -339,8 +340,8 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-	awful.button({ }, 1, function () mymainmenu:hide() end),
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+	-- awful.button({ }, 1, function () mymainmenu:hide() end),
+    -- awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -378,8 +379,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:toggle() end,
-              {description = "show main menu", group = "awesome"}),
+    -- awful.key({ modkey,           }, "w", function () mymainmenu:toggle() end,
+              -- {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -563,8 +564,8 @@ for i = 1, 9 do
 end
 
 clientbuttons = gears.table.join(
-    awful.button({ }, 1, function (c) client.focus = c; c:raise()
-                 mymainmenu:hide() end),
+    -- awful.button({ }, 1, function (c) client.focus = c; c:raise()
+    --              mymainmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
     awful.button({ modkey }, 3, awful.mouse.client.resize))
 
