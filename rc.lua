@@ -48,7 +48,7 @@ end
 -- Themes define colours, icons, font and wallpapers.
 -- Chosen colors and buttons look alike adapta maia theme
 -- beautiful.init("./themes/dinitar-fog/theme.lua")
-beautiful.init("/home/heliodoros/.config/awesome/themes/gruvbox-squares/theme.lua")
+beautiful.init("~/.config/awesome/themes/gruvbox-squares/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 browser = "exo-open --launch WebBrowser" or "firefox"
