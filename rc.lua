@@ -14,7 +14,7 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Freedesktop menu
---local freedesktop = require("freedesktop")
+local freedesktop = require("freedesktop")
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
 
@@ -102,20 +102,20 @@ myexitmenu = {
     { "reboot", "systemctl reboot", menubar.utils.lookup_icon("system-reboot") },
     { "shutdown", "poweroff", menubar.utils.lookup_icon("system-shutdown") }
 }
--- mymainmenu = freedesktop.menu.build({
---     icon_size = 32,
---     before = {
---         { "Terminal", terminal, menubar.utils.lookup_icon("utilities-terminal") },
---         { "Browser", browser, menubar.utils.lookup_icon("internet-web-browser") },
---         { "Files", filemanager, menubar.utils.lookup_icon("system-file-manager") },
---         -- other triads can be put here
---     },
---     after = {
---         { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
---         { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
---         -- other triads can be put here
---     }
--- })
+mymainmenu = freedesktop.menu.build({
+    icon_size = 32,
+    before = {
+        { "Terminal", terminal, menubar.utils.lookup_icon("utilities-terminal") },
+        { "Browser", browser, menubar.utils.lookup_icon("internet-web-browser") },
+        { "Files", filemanager, menubar.utils.lookup_icon("system-file-manager") },
+        -- other triads can be put here
+    },
+    after = {
+        { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
+        { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
+        -- other triads can be put here
+    }
+})
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
@@ -123,7 +123,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock("%H:%M ")
+mytextclock = wibox.widget.textclock("%H:%M:%S", 1)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -190,6 +190,8 @@ local bat_notification
 
 local bat = lain.widget.bat({
   settings = function()
+    if not bat_now.status then return end
+
     local perc = bat_now.perc
     local text
 
@@ -216,15 +218,11 @@ local bat = lain.widget.bat({
         position = "bottom_right",
       }
     end)
-    widget:connect_signal("mouse::leave", function () 
-      naughty.destroy(bat_notification) 
+    widget:connect_signal("mouse::leave", function ()
+      naughty.destroy(bat_notification)
     end)
   end
 })
-
-local function bat_popup ()
-
-end
 
 local net = lain.widget.net({
   notify = "off",
@@ -274,8 +272,14 @@ awful.screen.connect_for_each_screen(function(s)
       widget = wibox.widget.textbox
 
     }
-    awful.tag.attached_connect_signal(s, "property::selected", function () update_txt_layoutbox(s) end)
-    awful.tag.attached_connect_signal(s, "property::layout", function () update_txt_layoutbox(s) end)
+    awful.tag.attached_connect_signal(s, "property::selected", function ()
+	    update_txt_layoutbox(s)
+    end)
+
+    awful.tag.attached_connect_signal(s, "property::layout", function ()
+	    update_txt_layoutbox(s)
+    end)
+
     s.mytxtlayoutbox:buttons(gears.table.join(
                            awful.button({ }, 1, function () awful.layout.inc( 1) end),
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
@@ -284,17 +288,22 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
-	
+
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, opacity = 1 })
-    s.mybottomwibox = awful.wibar({ 
-      height = dpi(15),
-      position = "bottom", 
-      screen = s, 
-      visible = false 
+    s.mywibox = awful.wibar({
+	    position = "top",
+	    screen = s,
+	    opacity = 1
+    })
+
+    s.mybottomwibox = awful.wibar({
+      height = dpi(16),
+      position = "bottom",
+      screen = s,
+      visible = false
     })
 
     -- Add widgets to the wibox
@@ -340,8 +349,8 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-	-- awful.button({ }, 1, function () mymainmenu:hide() end),
-    -- awful.button({ }, 3, function () mymainmenu:toggle() end),
+    awful.button({ }, 1, function () mymainmenu:hide() end),
+    awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -352,11 +361,11 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",
         function ()
             local screen = awful.screen.focused()
-             
+
             if screen.mybottomwibox.visible == true then
-              screen.mybottomwibox.visible = false 
+              screen.mybottomwibox.visible = false
             else
-              screen.mybottomwibox.visible = true 
+              screen.mybottomwibox.visible = true
             end
         end,
 	{description="show help", group="awesome"}),
@@ -466,7 +475,10 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+
+
+	      awful.key({ modkey, "Shift"   }, "y", awful.placement.centered)
 )
 
 clientkeys = gears.table.join(
@@ -613,7 +625,7 @@ awful.rules.rules = {
         },
         role = {
           "AlarmWindow",  -- Thunderbird's calendar.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+          --"pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
       }, properties = { floating = true }},
 
@@ -622,12 +634,6 @@ awful.rules.rules = {
       except_any = { type = { "normal", "dialog" }, floating = false },
       properties = { titlebars_enabled = true }
     },
-	
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
-
-
 }
 -- }}}
 
