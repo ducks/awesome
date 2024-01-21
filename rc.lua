@@ -525,23 +525,29 @@ globalkeys = gears.table.join(
   awful.key({ modkey, "Shift" }, "y", awful.placement.centered)
 )
 
-  clientkeys = gears.table.join(
+clientkeys = gears.table.join(
   awful.key({ modkey }, "f",
   function (c)
     c.fullscreen = not c.fullscreen
     c:raise()
   end,
   { description = "toggle fullscreen", group = "client" }),
+
   awful.key({ modkey }, "x", function (c) c:kill() end,
   { description = "close", group = "client" }),
+
   awful.key({ modkey, "Control" }, "space", awful.client.floating.toggle ,
   { description = "toggle floating", group = "client" }),
+
   awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
   { description = "move to master", group = "client" }),
+
   awful.key({ modkey }, "o", function (c) c:move_to_screen() end,
   { description = "move to screen", group = "client" }),
+
   awful.key({ modkey }, "t", function (c) c.ontop = not c.ontop end,
   { description = "toggle keep on top", group = "client" }),
+
   awful.key({ modkey }, "n",
   function (c)
     -- The client currently has the input focus, so it cannot be
@@ -549,18 +555,21 @@ globalkeys = gears.table.join(
     c.minimized = true
   end ,
   { description = "minimize", group = "client" }),
+
   awful.key({ modkey }, "m",
   function (c)
     c.maximized = not c.maximized
     c:raise()
   end ,
   { description = "(un)maximize", group = "client" }),
+
   awful.key({ modkey, "Control" }, "m",
   function (c)
     c.maximized_vertical = not c.maximized_vertical
     c:raise()
   end ,
   { description = "(un)maximize vertically", group = "client" }),
+
   awful.key({ modkey, "Shift" }, "m",
   function (c)
     c.maximized_horizontal = not c.maximized_horizontal
@@ -574,56 +583,60 @@ globalkeys = gears.table.join(
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
   globalkeys = gears.table.join(globalkeys,
-  -- View tag only.
-  awful.key({ modkey }, "#" .. i + 9,
-  function ()
-    local screen = awful.screen.focused()
-    local tag = screen.tags[i]
-    if tag then
-      tag:view_only()
-    end
-  end,
-  { description = "view tag #"..i, group = "tag" }),
-  -- Toggle tag display.
-  awful.key({ modkey, "Control" }, "#" .. i + 9,
-  function ()
-    local screen = awful.screen.focused()
-    local tag = screen.tags[i]
-    if tag then
-      awful.tag.viewtoggle(tag)
-    end
-  end,
-  { description = "toggle tag #" .. i, group = "tag" }),
-  -- Move client to tag.
-  awful.key({ modkey, "Shift" }, "#" .. i + 9,
-  function ()
-    if client.focus then
-      local tag = client.focus.screen.tags[i]
+    -- View tag only.
+    awful.key({ modkey }, "#" .. i + 9,
+    function ()
+      local screen = awful.screen.focused()
+      local tag = screen.tags[i]
       if tag then
-        client.focus:move_to_tag(tag)
+        tag:view_only()
       end
-    end
-  end,
-  { description = "move focused client to tag #"..i, group = "tag" }),
-  -- Toggle tag on focused client.
-  awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
-  function ()
-    if client.focus then
-      local tag = client.focus.screen.tags[i]
+    end,
+    { description = "view tag #"..i, group = "tag" }),
+
+    -- Toggle tag display.
+    awful.key({ modkey, "Control" }, "#" .. i + 9,
+    function ()
+      local screen = awful.screen.focused()
+      local tag = screen.tags[i]
       if tag then
-        client.focus:toggle_tag(tag)
+        awful.tag.viewtoggle(tag)
       end
-    end
-  end,
-  { description = "toggle focused client on tag #" .. i, group = "tag" })
+    end,
+    { description = "toggle tag #" .. i, group = "tag" }),
+
+    -- Move client to tag.
+    awful.key({ modkey, "Shift" }, "#" .. i + 9,
+    function ()
+      if client.focus then
+        local tag = client.focus.screen.tags[i]
+        if tag then
+          client.focus:move_to_tag(tag)
+        end
+      end
+    end,
+    { description = "move focused client to tag #"..i, group = "tag" }),
+
+    -- Toggle tag on focused client.
+    awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
+    function ()
+      if client.focus then
+        local tag = client.focus.screen.tags[i]
+        if tag then
+          client.focus:toggle_tag(tag)
+        end
+      end
+    end,
+    { description = "toggle focused client on tag #" .. i, group = "tag" })
   )
 end
 
 clientbuttons = gears.table.join(
--- awful.button({ }, 1, function (c) client.focus = c; c:raise()
--- mymainmenu:hide() end),
-awful.button({ modkey }, 1, awful.mouse.client.move),
-awful.button({ modkey }, 3, awful.mouse.client.resize))
+  -- awful.button({ }, 1, function (c) client.focus = c; c:raise()
+  -- mymainmenu:hide() end),
+  awful.button({ modkey }, 1, awful.mouse.client.move),
+  awful.button({ modkey }, 3, awful.mouse.client.resize)
+)
 
 -- Set keys
 root.keys(globalkeys)
@@ -633,22 +646,25 @@ root.keys(globalkeys)
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
   -- All clients will match this rule.
-  { rule = { },
-  properties = { border_width = beautiful.border_width,
-  border_color = beautiful.border_normal,
-  focus = awful.client.focus.filter,
-  raise = true,
-  keys = clientkeys,
-  buttons = clientbuttons,
-  size_hints_honor = false, -- Remove gaps between terminals
-  screen = awful.screen.preferred,
-  callback = awful.client.setslave,
-  placement = awful.placement.no_overlap+awful.placement.no_offscreen
-}
-    },
+  {
+    rule = { },
+    properties = {
+      border_width = beautiful.border_width,
+      border_color = beautiful.border_normal,
+      focus = awful.client.focus.filter,
+      raise = true,
+      keys = clientkeys,
+      buttons = clientbuttons,
+      size_hints_honor = false, -- Remove gaps between terminals
+      screen = awful.screen.preferred,
+      callback = awful.client.setslave,
+      placement = awful.placement.no_overlap+awful.placement.no_offscreen
+    }
+  },
 
-    -- Floating clients.
-    { rule_any = {
+  -- Floating clients.
+  {
+    rule_any = {
       instance = {
         "DTA", -- Firefox addon DownThemAll.
         "copyq", -- Includes session name in class.
@@ -662,140 +678,152 @@ awful.rules.rules = {
         "Wpa_gui",
         "pinentry",
         "veromix",
-        "xtightvncviewer"},
+        "xtightvncviewer"
+      },
 
-        name = {
-          "Event Tester", -- xev.
-        },
-        role = {
-          "AlarmWindow", -- Thunderbird's calendar.
-          --"pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
-        }
-      }, properties = { floating = true }},
+      name = {
+        "Event Tester", -- xev.
+      },
+      role = {
+        "AlarmWindow", -- Thunderbird's calendar.
+        --"pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+      }
+    }, properties = { floating = true }
+  },
 
-      -- Add titlebars to normal clients and dialogs
-      { rule_any = { type = { "normal", "dialog" }, floating = true },
-      except_any = { type = { "normal", "dialog" }, floating = false },
-      properties = { titlebars_enabled = true }
+    -- Add titlebars to normal clients and dialogs
+  {
+    rule_any = {
+      type = { "normal", "dialog" },
+      floating = true
     },
-  }
-  -- }}}
+    except_any = {
+      type = { "normal", "dialog" },
+      floating = false
+    },
+    properties = {
+      titlebars_enabled = true
+    }
+  },
+}
+-- }}}
 
-  -- {{{ Signals
+-- {{{ Signals
 
+-- Signal function to execute when a new client appears.
+client.connect_signal("manage", function (c)
+  -- Set the windows at the slave,
+  -- i.e. put it at the end of others instead of setting it master.
+  -- if not awesome.startup then awful.client.setslave(c) end
 
-  -- Signal function to execute when a new client appears.
-  client.connect_signal("manage", function (c)
-    -- Set the windows at the slave,
-    -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
+  if awesome.startup and
+    not c.size_hints.user_position and
+    not c.size_hints.program_position then
+    -- Prevent clients from being unreachable after screen count changes.
+    awful.placement.no_offscreen(c)
+  end
+end)
 
-    if awesome.startup and
-      not c.size_hints.user_position
-      and not c.size_hints.program_position then
-      -- Prevent clients from being unreachable after screen count changes.
-      awful.placement.no_offscreen(c)
-    end
-  end)
-
-  -- Add a titlebar if titlebars_enabled is set to true in the rules.
-  client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
+-- Add a titlebar if titlebars_enabled is set to true in the rules.
+client.connect_signal("request::titlebars", function(c)
+  -- buttons for the titlebar
+  local buttons = gears.table.join(
     awful.button({ }, 1, function()
       client.focus = c
       c:raise()
       awful.mouse.client.move(c)
     end),
+
     awful.button({ }, 3, function()
       client.focus = c
       c:raise()
       awful.mouse.client.resize(c)
     end)
-    )
+  )
 
-    awful.titlebar(c) : setup {
-      { -- Left
+  awful.titlebar(c):setup {
+    layout = wibox.layout.align.horizontal,
+    -- Left
+    {
+      layout = wibox.layout.fixed.horizontal,
       awful.titlebar.widget.iconwidget(c),
       buttons = buttons,
-      layout = wibox.layout.fixed.horizontal
     },
-    { -- Middle
-    { -- Title
-    align = "center",
-    widget = awful.titlebar.widget.titlewidget(c)
-  },
-  buttons = buttons,
-  layout = wibox.layout.flex.horizontal
-},
-{ -- Right
-awful.titlebar.widget.floatingbutton(c),
--- awful.titlebar.widget.ontopbutton(c),
-awful.titlebar.widget.maximizedbutton(c),
-awful.titlebar.widget.closebutton(c),
-layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-      }
-      -- Hide the menubar if we are not floating
-      -- local l = awful.layout.get(c.screen)
-      -- if not (l.name == "floating" or c.floating) then
-      -- awful.titlebar.hide(c)
-      -- end
-    end)
 
-    -- Enable sloppy focus, so that focus follows mouse.
-    client.connect_signal("mouse::enter", function(c)
-      if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
-        and awful.client.focus.filter(c) then
-        client.focus = c
-      end
-    end)
+    -- Middle
+    {
 
-    -- client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-    -- client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+      layout = wibox.layout.flex.horizontal,
+      -- Title
+      {
+        align = "center",
+        widget = awful.titlebar.widget.titlewidget(c)
+      },
+      buttons = buttons,
+    },
 
-    -- Disable borders on lone windows
-    -- Handle border sizes of clients.
-    for s = 1, screen.count() do screen[s]:connect_signal("arrange", function ()
-      local clients = awful.client.visible(s)
-      local layout = awful.layout.getname(awful.layout.get(s))
+    -- Right
+    {
+      layout = wibox.layout.fixed.horizontal(),
+      awful.titlebar.widget.floatingbutton(c),
+      -- awful.titlebar.widget.ontopbutton(c),
+      awful.titlebar.widget.maximizedbutton(c),
+      awful.titlebar.widget.closebutton(c),
+    },
+  }
+end)
 
-      for _, c in pairs(clients) do
-        -- No borders with only one humanly visible client
-        if c.maximized then
-          -- NOTE: also handled in focus, but that does not cover maximizing from a
-          -- tiled state (when the client had focus).
-          c.border_width = 0
-        elseif c.floating or layout == "floating" then
-          c.border_width = beautiful.border_width
-        elseif layout == "max" or layout == "fullscreen" then
-          c.border_width = 0
+-- Enable sloppy focus, so that focus follows mouse.
+client.connect_signal("mouse::enter", function(c)
+  if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier and
+    awful.client.focus.filter(c) then
+    client.focus = c
+  end
+end)
+
+-- client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+-- client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+-- Disable borders on lone windows
+-- Handle border sizes of clients.
+for s = 1, screen.count() do
+  screen[s]:connect_signal("arrange", function ()
+    local clients = awful.client.visible(s)
+    local layout = awful.layout.getname(awful.layout.get(s))
+
+    for _, c in pairs(clients) do
+      -- No borders with only one humanly visible client
+      if c.maximized then
+        -- NOTE: also handled in focus, but that does not cover maximizing from a
+        -- tiled state (when the client had focus).
+        c.border_width = 0
+      elseif c.floating or layout == "floating" then
+        c.border_width = beautiful.border_width
+      elseif layout == "max" or layout == "fullscreen" then
+        c.border_width = 0
+      else
+        local tiled = awful.client.tiled(c.screen)
+        if #tiled == 1 then -- and c == tiled[1] then
+          tiled[1].border_width = 0
+          -- if layout ~= "max" and layout ~= "fullscreen" then
+          -- XXX: SLOW!
+          -- awful.client.moveresize(0, 0, 2, 0, tiled[1])
+          -- end
         else
-          local tiled = awful.client.tiled(c.screen)
-          if #tiled == 1 then -- and c == tiled[1] then
-            tiled[1].border_width = 0
-            -- if layout ~= "max" and layout ~= "fullscreen" then
-            -- XXX: SLOW!
-            -- awful.client.moveresize(0, 0, 2, 0, tiled[1])
-            -- end
-          else
-            c.border_width = beautiful.border_width
-          end
+          c.border_width = beautiful.border_width
         end
       end
-    end)
-  end
-
-  -- }}}
-
-  client.connect_signal("property::floating", function (c)
-    if c.floating then
-      awful.titlebar.show(c)
-    else
-      awful.titlebar.hide(c)
     end
   end)
+end
+-- }}}
 
-  awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+client.connect_signal("property::floating", function (c)
+  if c.floating then
+    awful.titlebar.show(c)
+  else
+    awful.titlebar.hide(c)
+  end
+end)
 
+awful.spawn.with_shell("~/.config/awesome/autorun.sh")
