@@ -73,6 +73,7 @@ awful.layout.layouts = {
 -- }}}
 
 local spacer = wibox.widget.textbox(' ')
+local spacer_5 = wibox.widget.textbox('     ')
 
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
@@ -141,6 +142,33 @@ local month_calendar_options = {
 local month_calendar = awful.widget.calendar_popup.month(month_calendar_options)
 
 month_calendar:attach(mytextclock, "tr", { on_hover = false })
+
+-- {{{ Update text widget
+-- Creates a text widget that shows a ! if there are updates available
+
+local update_widget = wibox.widget {
+  font = beautiful.notification_font,
+  markup = "<b>!</b>",
+  halign = "center",
+  valign = "center",
+  visible = false,
+  widget = wibox.widget.textbox
+}
+
+local update_timer =
+  awful.widget.watch(
+    'checkupdates',
+    60,
+    function(widget, stdout)
+      if string.len(stdout) > 0 then
+        widget.visible = true
+        return
+      else
+        widget.visible = false
+      end
+    end,
+    update_widget
+  )
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -342,8 +370,10 @@ awful.screen.connect_for_each_screen(function(s)
     -- Right widgets
     {
       layout = wibox.layout.fixed.horizontal,
+      update_widget,
+      spacer_5,
       mytextclock,
-      spacer,
+      spacer_5,
     },
   }
 
