@@ -634,7 +634,7 @@ for i = 1, 9 do
         end
       end
     end,
-    { description = "move focused client to tag #"..i, group = "tag" }),
+    { description = "move focused client to tag #"..i, group = "tag" })
   )
 end
 
