@@ -13,7 +13,7 @@ local theme = {}
 
 local theme_name = "gruvbox-squares"
 
-theme.font              = "Noto Sans Regular 10"
+theme.font              = "Noto Sans Regular 12"
 theme.notification_font = "Noto Sans Bold 14"
 
 theme.red           = "#cc241d"
@@ -37,6 +37,9 @@ theme.border_width  = dpi(1)
 theme.border_normal = "#1d2021"
 theme.border_focus  = "#ebdbb2"
 theme.border_marked = "#91231c"
+
+theme.hotkeys_modifiers_bg = theme.bg_normal
+theme.hotkeys_modifiers_fg = theme.fg_normal
 
 -- There are other variable sets
 -- overriding the default one when

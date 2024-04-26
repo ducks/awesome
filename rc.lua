@@ -15,8 +15,6 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
--- Enable VIM help for hotkeys widget when client with matching name is opened:
-require("awful.hotkeys_popup.keys.vim")
 
 local lain = require("lain")
 local markup = lain.util.markup
@@ -126,7 +124,12 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock("%a %b %d, %H:%M:%S", 1)
+mytextclock = wibox.widget {
+  font = beautiful.font,
+  format = "%a %b %d, %H:%M:%S",
+  refresh = 1,
+  widget = wibox.widget.textclock,
+}
 
 local month_calendar_styles = {
   halign = "center"
@@ -147,12 +150,17 @@ month_calendar:attach(mytextclock, "tr", { on_hover = false })
 -- Creates a text widget that shows a ! if there are updates available
 
 local update_widget = wibox.widget {
-  font = beautiful.notification_font,
-  markup = "<b>!</b>",
-  halign = "center",
-  valign = "center",
-  visible = false,
-  widget = wibox.widget.textbox
+  {
+    id = "uw",
+    font = beautiful.notification_font,
+    markup = "<b>!</b>",
+    halign = "center",
+    valign = "center",
+    visible = false,
+    widget = wibox.widget.textbox
+  },
+  fg = beautiful.orange,
+  widget = wibox.container.background
 }
 
 local update_timer =
@@ -167,7 +175,7 @@ local update_timer =
         widget.visible = false
       end
     end,
-    update_widget
+    update_widget.uw
   )
 
 -- Create a wibox for each screen and add it
@@ -342,7 +350,7 @@ awful.screen.connect_for_each_screen(function(s)
   s.mywibox = awful.wibar({
     position = "top",
     screen = s,
-    opacity = 1
+    opacity = 1,
   })
 
   s.mybottomwibox = awful.wibar({
@@ -425,6 +433,9 @@ end
 -- {{{ Key bindings
 globalkeys = gears.table.join(
   awful.key({ modkey }, "s", toggle_mybottomwibox,
+  { description="toggle bottom status bar", group="awesome" }),
+
+  awful.key({ modkey }, "/", hotkeys_popup.show_help,
   { description="show help", group="awesome" }),
 
   awful.key({ modkey }, "Left", awful.tag.viewprev,
@@ -788,8 +799,8 @@ client.connect_signal("mouse::enter", function(c)
   end
 end)
 
--- client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
--- client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
 -- Disable borders on lone windows
 -- Handle border sizes of clients.
@@ -832,5 +843,8 @@ client.connect_signal("property::floating", function (c)
     awful.titlebar.hide(c)
   end
 end)
+
+local theme = beautiful.get()
+beautiful.init(theme)
 
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
